@@ -1,0 +1,36 @@
+{
+  "name": "task-note",
+  "version": "0.0.0",
+  "description": "Task note, experimental.",
+  "scripts": {
+    "start": "webpack --mode development --watch",
+    "build": "webpack --mode production"
+  },
+  "repository": "git+https://github.com/chwnam/task-note.git",
+  "keywords": [
+    "wordpress",
+    "wordpress-plugin",
+    "react",
+    "task-note"
+  ],
+  "author": "changwoo",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://github.com/chwnam/task-note#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-function-bind": "^7.2.0",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.1.0",
+    "react-datepicker": "^2.8.0",
+    "react-router-dom": "^5.0.1",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6"
+  },
+  "main": "index.js",
+  "dependencies": {}
+}
