@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 업무 노트
  * Description: 업무 일지를 매일매일 작성합시다. 도움이 됩니다.
- * Version:     0.0.2
+ * Version:     0.0.3
  * Author:      남창우
  * Author URI:  https://blog.changwoo.pe.kr
  * Plugin URI:  https://github.com/chwnam/task-note.git
