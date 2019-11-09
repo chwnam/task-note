@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class Task_Note_Custom_Types
+ */
 class Task_Note_Custom_Types {
 	public function __construct() {
 		add_action( 'init', [ $this, 'init_callback' ] );

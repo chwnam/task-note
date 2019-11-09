@@ -1,0 +1,14 @@
+{
+  "name": "task-note",
+  "main": "build/index.js",
+  "repository": "git@github.com:chwnam/task-note.git",
+  "author": "changwoo <ep6tri@hotmail.com>",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@wordpress/scripts": "5.1.0"
+  },
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start"
+  }
+}

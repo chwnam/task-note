@@ -55,6 +55,7 @@ final class Task_Note {
 
 			$class_map = [
 				'Task_Note_Custom_Types' => $dir . '/class-task-note-custom-types.php',
+				'Task_Note_Edit_Post'    => $dir . '/class-task-note-edit-post.php',
 			];
 		}
 
@@ -70,6 +71,7 @@ final class Task_Note {
 
 	public function init_modules() {
 		$this->modules['custom_types'] = new Task_Note_Custom_Types();
+		$this->modules['edit_post']    = new Task_Note_Edit_Post();
 	}
 }
 
