@@ -132,7 +132,7 @@ class Task_Note_Custom_Types {
 	}
 
 	public function restrict_to_frontend( ?array $posts, WP_Query $query ): ?array {
-		if ( $query->is_main_query() ) {
+		if ( $query->is_main_query() && 'task_note' === $query->get( 'post_type' ) ) {
 			remove_filter( 'posts_pre_query', [ $this, 'restrict_to_frontend' ] );
 			if ( ! current_user_can( 'administrator' ) ) {
 				$posts = [];
