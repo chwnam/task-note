@@ -52,8 +52,3 @@ registerPlugin('task-note-date-picker', {
         </PluginPostStatusInfo>
     )
 });
-
-document.addEventListener('DOMContentLoaded', function () {
-    // noinspection JSValidateTypes,JSUnresolvedFunction
-    wp.data.dispatch('core/editor').editPost({title: dateI18n('Y년 m월 d일 (D)', new Date(), false) + ' 업무일지'})
-});
