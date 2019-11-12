@@ -76,7 +76,7 @@ class Task_Note_Custom_Types {
 					'slug'       => 'task-note',
 					'with_front' => true,
 					'feeds'      => false,
-					'pages'      => false,
+					'pages'      => true,
 					'ep_mask'    => EP_PERMALINK,
 				],
 				'query_var'           => 'task-note',
