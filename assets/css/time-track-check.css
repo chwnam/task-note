@@ -1,0 +1,117 @@
+#time-track-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 480px;
+    height: 120px;
+    background-color: #1c1c1c;
+    opacity: 70%;
+    box-sizing: border-box;
+}
+
+#info-area {
+    float: left;
+    width: 360px;
+    height: 100%;
+    padding: 7px 15px;
+    color: #00FF00;
+    background-color: #000000;
+    box-sizing: border-box;
+}
+
+#info-area p {
+    margin: 0;
+    font-family: "Noto Sams CJK KR", sans-serif;
+}
+
+#project-tag {
+    font-size: 14px;
+    color: #00FF00;
+}
+
+#tracking-title {
+    font-size: 20px;
+    color: #00FF00;
+}
+
+#project-tag:active,
+#tracking-title:active {
+    color: #00AA00;
+}
+
+#tracking-timer {
+    font-size: 36px;
+    line-height: 46px;
+}
+
+#button-area {
+    float: right;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#time-track-panel-button {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    background-color: #00FF00;
+    color: #000000;
+    font-weight: bold;
+    border-width: 0;
+
+    background-size: 100% 200%;
+    background-image: linear-gradient(to bottom, #00FF00 50%, #00AA00 50%);
+    -webkit-transition: background-position 0.3s;
+    -moz-transition: background-position 0.3s;
+    transition: background-position 0.3s;
+}
+
+#time-track-panel-button:active {
+    background-position: 0 100%;
+    -webkit-transition: background-position 1s;
+    -moz-transition: background-position 1s;
+    transition: background-position 1s;
+}
+
+#time-track-panel-button span.dashicons {
+    width: 60px;
+    height: 60px;
+    font-size: 60px;
+}
+
+#time-track-panel-button span.dashicons.dashicons-controls-play {
+    padding-left: 5px;
+}
+
+#time-track-panel-button span.dashicons.dashicons-yes {
+}
+
+#project-tag-select {
+    font-size: 12px;
+    height: 24px;
+    border-width: 0;
+}
+
+#new-tracking-title {
+    border-width: 0;
+    font-size: 18px;
+    height: 30px;
+    width: 260px;
+    margin: 3px 0;
+}
+
+#time-track-panel .current-info .edit-button {
+    font-size: 14px;
+}
+
+#info-area .edit-button.apply {
+    color: #00FF00;
+}
+
+#info-area  .edit-button.cancel {
+    color: red;
+}
+
+#time-track-panel a {
+    text-decoration-line: none;
+}

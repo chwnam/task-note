@@ -1,6 +1,6 @@
 <?php
 
-class Task_Note_Edit_Post {
+class Task_Note_Admin_Task_Note {
 	public function __construct() {
 		add_action( 'init', [ $this, 'register_plugins' ] );
 		add_action( 'current_screen', [ $this, 'current_screen' ] );

@@ -54,8 +54,11 @@ final class Task_Note {
 			$dir = dirname( TASK_NOTE_MAIN ) . '/includes';
 
 			$class_map = [
-				'Task_Note_Custom_Types' => $dir . '/class-task-note-custom-types.php',
-				'Task_Note_Edit_Post'    => $dir . '/class-task-note-edit-post.php',
+				'Task_Note_Admin_Task_Note'  => $dir . '/class-task-note-admin-task-note.php',
+				'Task_Note_Admin_Time_Track' => $dir . '/class-task-note-admin-time-track.php',
+				'Task_Note_Custom_Types'     => $dir . '/class-task-note-custom-types.php',
+				'Task_Note_Scripts'          => $dir . '/class-task-note-scripts.php',
+				'Task_Note_Time_Track_Check' => $dir . '/class-task-note-time-track-check.php',
 			];
 		}
 
@@ -70,8 +73,11 @@ final class Task_Note {
 	}
 
 	public function init_modules() {
-		$this->modules['custom_types'] = new Task_Note_Custom_Types();
-		$this->modules['edit_post']    = new Task_Note_Edit_Post();
+		$this->modules['custom_types']     = new Task_Note_Custom_Types();
+		$this->modules['edit_task_note']   = new Task_Note_Admin_Task_Note();
+		$this->modules['edit_time_track']  = new Task_Note_Admin_Time_Track();
+		$this->modules['scripts']          = new Task_Note_Scripts();
+		$this->modules['time_track_check'] = new Task_Note_Time_Track_Check();
 	}
 }
 

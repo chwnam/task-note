@@ -4,16 +4,23 @@
  * Class Task_Note_Custom_Types
  */
 class Task_Note_Custom_Types {
+	const TASK_NOTE   = 'task_note';
+	const TIME_TRACK  = 'time_track';
+	const PROJECT_TAG = 'project_tag';
+	const DATE_BEGIN  = 'tn_time_track_date_begin';
+	const DATE_END    = 'tn_time_track_date_end';
+
 	public function __construct() {
 		add_action( 'init', [ $this, 'init_callback' ] );
 
 		register_activation_hook( TASK_NOTE_MAIN, [ $this, 'activation_callback' ] );
 		register_deactivation_hook( TASK_NOTE_MAIN, [ $this, 'deactivation_callback' ] );
 
-		if ( ! is_admin() ) {
-			add_filter( 'posts_pre_query', [ $this, 'restrict_to_frontend' ], 10, 2 );
-		} else {
+		if ( is_admin() ) {
 			add_filter( 'enter_title_here', [ $this, 'modify_editor_title' ], 10, 2 );
+			add_filter( 'use_block_editor_for_post_type', [ $this, 'is_block_editor_used' ], 10, 2 );
+		} else {
+			add_filter( 'posts_pre_query', [ $this, 'restrict_to_frontend' ], 10, 2 );
 		}
 	}
 
@@ -29,11 +36,12 @@ class Task_Note_Custom_Types {
 	public function init_callback(): void {
 		$this->register_post_type();
 		$this->register_taxonomy();
+		$this->register_meta_fields();
 	}
 
 	public function register_post_type(): void {
 		register_post_type(
-			'task_note',
+			self::TASK_NOTE,
 			[
 				'labels'              => [
 					'name'                     => '업무일지들',
@@ -70,7 +78,7 @@ class Task_Note_Custom_Types {
 				'menu_icon'           => 'dashicons-text-page',
 				'hierarchical'        => false,
 				'supports'            => [ 'title', 'editor' ],
-				'taxonomies'          => [ 'project_tag' ],
+				'taxonomies'          => [ self::PROJECT_TAG ],
 				'has_archive'         => true,
 				'rewrite'             => [
 					'slug'       => 'task-note',
@@ -85,12 +93,66 @@ class Task_Note_Custom_Types {
 				'show_in_rest'        => true,
 			]
 		);
+
+		register_post_Type(
+			self::TIME_TRACK,
+			[
+				'labels'              => [
+					'name'                     => '시간추적들',
+					'singular_name'            => '시간추적',
+					'add_new'                  => '새로 작성',
+					'add_new_item'             => '새 시간추적 작성',
+					'new_item'                 => '새 시간추적',
+					'view_item'                => '시간추적 보기',
+					'view_items'               => '시간추적 보기',
+					'edit_item'                => '시간추적 수정',
+					'search_items'             => '시간추적 검색',
+					'not_found'                => '시간추적 찾을 수 없음.',
+					'not_found_in_trash'       => '휴지통에서 시간추적 찾을 수 없음.',
+					'all_items'                => '모든 시간추적',
+					'archives'                 => '시간추적 목록',
+					'attributes'               => '시간추적 속성',
+					'insert_into_item'         => '시간추적에 삽입',
+					'uploaded_to_this_item'    => '이 시간추적로 업로드',
+					'menu_name'                => '시간추적',
+					'filter_items_list'        => '시간추적 목록 필터',
+					'items_list_navigation'    => '시간추적 목록 탐색',
+					'items_list'               => '시간추적 목록',
+					'name_admin_bar'           => '시간추적',
+					'item_published'           => '시간추적 발행됨',
+					'item_published_privately' => '시간추적가 비공개로 발행됨',
+					'item_reverted_to_draft'   => '시간추적 임시글로 변경됨',
+					'item_scheduled'           => '시간추적 발행 예약됨',
+					'item_updated'             => '시간추적 업데이트됨.',
+				],
+				'description'         => '시간추적 포스트 타입',
+				'public'              => true,
+				'exclude_from_search' => true,
+				'menu_position'       => 6,
+				'menu_icon'           => 'dashicons-clock',
+				'hierarchical'        => false,
+				'supports'            => [ 'title', 'editor' ],
+				'taxonomies'          => [ self::PROJECT_TAG ],
+				'has_archive'         => true,
+				'rewrite'             => [
+					'slug'       => 'time-track',
+					'with_front' => true,
+					'feeds'      => false,
+					'pages'      => true,
+					'ep_mask'    => EP_PERMALINK,
+				],
+				'query_var'           => 'time-track',
+				'can_export'          => true,
+				'delete_with_user'    => false,
+				'show_in_rest'        => true,
+			]
+		);
 	}
 
 	public function register_taxonomy(): void {
 		register_taxonomy(
-			'project_tag',
-			[ 'task_note' ],
+			self::PROJECT_TAG,
+			[ self::TASK_NOTE, self::TIME_TRACK ],
 			[
 				'labels'             => [
 					'name'                       => '프로젝트 태그',
@@ -131,8 +193,40 @@ class Task_Note_Custom_Types {
 		);
 	}
 
+	public function register_meta_fields(): void {
+		/** @uses Task_Note_Custom_Types::sanitize_datetime() */
+		register_meta(
+			'post',
+			self::DATE_BEGIN,
+			[
+				'object_subtype'    => self::TIME_TRACK,
+				'type'              => 'int',
+				'description'       => '시작 시간의 타임스탬프',
+				'single'            => true,
+				'sanitize_callback' => [ $this, 'sanitize_datetime' ],
+				'auth_callback'     => null,
+				'show_in_rest'      => false,
+			]
+		);
+
+		/** @uses Task_Note_Custom_Types::sanitize_datetime() */
+		register_meta(
+			'post',
+			self::DATE_END,
+			[
+				'object_subtype'    => self::TIME_TRACK,
+				'type'              => 'int',
+				'description'       => '종료 시각의 타임스탬프',
+				'single'            => true,
+				'sanitize_callback' => [ $this, 'sanitize_datetime' ],
+				'auth_callback'     => null,
+				'show_in_rest'      => false,
+			]
+		);
+	}
+
 	public function restrict_to_frontend( ?array $posts, WP_Query $query ): ?array {
-		if ( $query->is_main_query() && 'task_note' === $query->get( 'post_type' ) ) {
+		if ( $query->is_main_query() && in_array( $query->get( 'post_type' ), [ 'task_note', 'time_track' ] ) ) {
 			remove_filter( 'posts_pre_query', [ $this, 'restrict_to_frontend' ] );
 			if ( ! current_user_can( 'administrator' ) ) {
 				$posts = [];
@@ -149,5 +243,36 @@ class Task_Note_Custom_Types {
 		}
 
 		return $title;
+	}
+
+	public function is_block_editor_used( bool $value, string $post_type ): bool {
+		if ( 'time_track' === $post_type ) {
+			$value = false;
+		}
+		return $value;
+	}
+
+	public function sanitize_datetime( $value ): int {
+		$sanitized = false;
+
+		if ( is_int( $value ) ) {
+			$sanitized = $value;
+		} elseif ( is_string( $value ) ) {
+			if ( is_numeric( $value ) ) {
+				$sanitized = absint( $value );
+			} else {
+				$datetime = DateTime::createFromFormat( 'Y-m-d', $value, new DateTimeZone( 'Asia/Seoul' ) );
+				if ( $datetime ) {
+					$sanitized = $datetime->getTimestamp();
+				}
+			}
+		} elseif ( is_array( $value ) && 3 === sizeof( $value ) ) {
+			$datetime = DateTime::createFromFormat( 'Y-m-d', implode( '-', $value ), new DateTimeZone( 'Asia/Seoul' ) );
+			if ( $datetime ) {
+				$sanitized = $datetime->getTimestamp();
+			}
+		}
+
+		return intval( $sanitized );
 	}
 }
