@@ -5,7 +5,7 @@
     width: 480px;
     height: 120px;
     background-color: #1c1c1c;
-    opacity: 70%;
+    opacity: 60%;
     box-sizing: border-box;
 }
 
@@ -68,15 +68,16 @@
 
 #time-track-panel-button:active {
     background-position: 0 100%;
-    -webkit-transition: background-position 1s;
-    -moz-transition: background-position 1s;
-    transition: background-position 1s;
+    -webkit-transition: background-position 1.5s;
+    -moz-transition: background-position 1.5s;
+    transition: background-position 1.5s;
 }
 
 #time-track-panel-button span.dashicons {
     width: 60px;
     height: 60px;
     font-size: 60px;
+    cursor: pointer;
 }
 
 #time-track-panel-button span.dashicons.dashicons-controls-play {

@@ -73,6 +73,8 @@ final class Task_Note {
 	}
 
 	public function init_modules() {
+		class_alias( 'Task_Note_Custom_Types', 'TNCT');
+
 		$this->modules['custom_types']     = new Task_Note_Custom_Types();
 		$this->modules['edit_task_note']   = new Task_Note_Admin_Task_Note();
 		$this->modules['edit_time_track']  = new Task_Note_Admin_Time_Track();

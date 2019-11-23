@@ -1,110 +1,300 @@
 /* global jQuery */
 (function ($) {
-    var timeTrackPanel = $('#time-track-panel'),
-        projectTagSelect = $('#project-tag-select'),
-        newTrackingTitle = $('#new-tracking-title'),
-        trackingTimer = $('#tracking-timer'),
-        button = $('#time-track-panel-button');
-
-    var projectTag = $('#project-tag'),
-        projectStatusDesc = $('#project-status-desc'),
-        editProjectTagArea = $('#edit-project-tag-area'),
-        trackingTitle = $('#tracking-title'),
-        editTrackingTitleArea = $('#edit-tracking-title-area');
-
     var tnTimeTrackCheck = window.hasOwnProperty('tnTimeTrackCheck') ? window.tnTimeTrackCheck : {
-        ajaxUrl: '',
-        nonce: '',
+        ajaxUrl: ''
+        , nonce: ''
     };
 
-    timeTrackPanel.on('getCurrentTimeTracking', function () {
+    var tracker = new function () {
+        var $this = this
+            , panel = $('#time-track-panel')
+            , handlers = {}
+        ;
 
-    }).on('updateCurrentTimeTracking', function (e, params) {
-        var data = $.extend({
-            nonce: tnTimeTrackCheck.nonce,
-            action: 'update_current_time_tracking',
-        }, params.data || {});
+        this.init = function () {
+            $.ajax(tnTimeTrackCheck.ajaxUrl, {
+                method: 'get',
+                data: {
+                    action: 'time_track_checkpoint',
+                    checkpoint: 'get',
+                    nonce: tnTimeTrackCheck.nonce
+                }
+            }).done(function (response) {
+                if (response.success && response.data.track_id) {
+                    $this.handle('resumed', [response]);
+                }
+            });
+        };
 
-        params = $.extend({
-            method: 'post',
-            data: data,
-            success: function (r) {
-                console.log(r);
-            },
-            error: function (jqXhr) {
-            },
-            complete: function (jqXhr) {
+        this.start = function () {
+            $.ajax(tnTimeTrackCheck.ajaxUrl, {
+                method: 'post',
+                data: {
+                    action: 'time_track_checkpoint',
+                    checkpoint: 'start',
+                    nonce: tnTimeTrackCheck.nonce
+                }
+            }).done(function (response) {
+                $this.handle('started', [response]);
+            });
+        };
+
+        this.stop = function () {
+            $.ajax(tnTimeTrackCheck.ajaxUrl, {
+                method: 'post',
+                data: {
+                    action: 'time_track_checkpoint',
+                    checkpoint: 'stop',
+                    nonce: tnTimeTrackCheck.nonce
+                }
+            }).done(function (response) {
+                $this.handle('stopped', [response]);
+            });
+        };
+
+        this.update = function () {
+            $.ajax(tnTimeTrackCheck.ajaxUrl, {
+                method: 'post',
+                data: {
+                    action: 'time_track_checkpoint',
+                    checkpoint: 'update',
+                    nonce: tnTimeTrackCheck.nonce,
+                    track_title: title.get(),
+                    project_slug: project.get()
+                }
+            }).done(function (response) {
+                $this.handle('updated', response);
+            });
+        };
+
+        this.handle = function (name, args) {
+            if (handlers.hasOwnProperty(name)) {
+                $(handlers[name]).each(function (idx, elem) {
+                    elem.apply(null, args);
+                });
             }
-        }, params);
+        };
 
-        $.ajax(tnTimeTrackCheck.ajaxUrl, params);
-    });
-
-    new function () {
-        projectTag.on('click', function (e) {
-            if (button.data('status') === 'initial') {
-                return false;
+        this.addHandler = function (name, handler) {
+            if (!handlers.hasOwnProperty(name)) {
+                handlers[name] = [];
             }
-            projectTagSelect.val(projectTag.data('slug'));
-            projectTag.hide();
-            projectStatusDesc.hide();
-            editProjectTagArea.show();
+            handlers[name].push(handler);
+
+            return this;
+        };
+
+        this.addHandler('transition', function (status) {
+            switch (status) {
+                case 'initial':
+                    break;
+
+                case 'started':
+                    $this.start();
+                    break;
+
+                case 'stopped':
+                    $this.stop();
+                    break;
+            }
+        });
+
+        this.getCurrentStatus = function () {
+            return button.getStatus();
+        }
+    };
+
+    var project = new function () {
+        var $this = this
+            , text = $('#project-tag')
+            , select = $('#project-tag-select')
+            , edit = $('#edit-project-tag-area')
+        ;
+
+        this.update = function () {
+            return this.set(select.val())
+        };
+
+        this.get = function () {
+            return text.data('slug');
+        };
+
+        this.set = function (slug) {
+            var opt = select.find('option[value="' + slug + '"]');
+            if (opt.length) {
+                opt.attr('checked', 'checked');
+                text.data('slug', opt.val()).text(opt.text());
+            } else {
+                select.val('');
+                text.data('slug', '').text(text.data('untagged'));
+            }
+            return this;
+        };
+
+        this.showEditForm = function () {
+            if ('started' === tracker.getCurrentStatus()) {
+                select.val(text.data('slug'));
+                text.hide();
+                edit.show();
+            }
+        };
+
+        this.applyEditForm = function () {
+            if ('started' === tracker.getCurrentStatus()) {
+                this.update();
+                text.show();
+                edit.hide();
+            }
+        };
+
+        this.cancelEditForm = function () {
+            text.show();
+            edit.hide();
+        };
+
+        text.on('click', function (e) {
             e.preventDefault();
+            $this.showEditForm();
         });
 
         $('#project-tag-apply').on('click', function (e) {
-            projectTag
-                .data('slug', projectTagSelect.val())
-                .text(projectTagSelect.find('option:selected').text());
-            projectTag.show();
-            projectStatusDesc.show();
-            editProjectTagArea.hide();
             e.preventDefault();
+            $this.applyEditForm();
+            tracker.update();
         });
 
         $('#project-tag-cancel').on('click', function (e) {
-            projectTag.show();
-            projectStatusDesc.show();
-            editProjectTagArea.hide();
             e.preventDefault();
+            $this.cancelEditForm();
+        });
+
+        tracker.addHandler('started', function (response) {
+            if (response.success) {
+                $this.set(response.data.project_slug);
+            }
+        });
+
+        tracker.addHandler('resumed', function (response) {
+            if (response.success && response.data.project_slug) {
+                $this.set(response.data.project_slug);
+            }
         });
     };
 
-    new function () {
-        trackingTitle.on('click', function (e) {
-            if (button.data('status') === 'initial') {
-                return false;
+    var title = new function () {
+        var $this = this
+            , text = $('#tracking-title')
+            , input = $('#new-tracking-title')
+            , edit = $('#edit-tracking-title-area')
+        ;
+
+        this.get = function () {
+            return text.text();
+        };
+
+        this.set = function (value) {
+            if (value.trim().length) {
+                text.text(value);
+            } else {
+                text.text(text.data('untitled'));
             }
-            newTrackingTitle.val(trackingTitle.text());
-            trackingTitle.hide();
-            editTrackingTitleArea.show();
-            newTrackingTitle.select();
+            return this;
+        };
+
+        this.showEditForm = function () {
+            console.log(tracker.getCurrentStatus());
+            if ('started' === tracker.getCurrentStatus()) {
+                text.hide();
+                edit.val(text.text()).show();
+                input.select();
+            }
+        };
+
+        this.applyEditForm = function () {
+            if ('started' === tracker.getCurrentStatus()) {
+                text.text(input.val()).show();
+                edit.hide();
+            }
+        };
+
+        this.cancelEditForm = function () {
+            text.show();
+            edit.hide();
+        };
+
+        text.on('click', function (e) {
             e.preventDefault();
+            $this.showEditForm();
         });
 
         $('#tracking-title-apply').on('click', function (e) {
-            trackingTitle.text(newTrackingTitle.val());
-            trackingTitle.show();
-            editTrackingTitleArea.hide();
             e.preventDefault();
+            $this.applyEditForm();
+            tracker.update();
         });
 
         $('#tracking-title-cancel').on('click', function (e) {
-            trackingTitle.show();
-            editTrackingTitleArea.hide();
             e.preventDefault();
+            $this.cancelEditForm();
+        });
+
+        tracker.addHandler('started', function (response) {
+            if (response.success && response.data.track_title) {
+                $this.set(response.data.track_title);
+            }
+        });
+
+        tracker.addHandler('resumed', function (response) {
+            if (response.success && response.data.track_title) {
+                $this.set(response.data.track_title);
+            }
         });
     };
 
-    new function () {
-        var tracker = false,
-            buttonTimer = false,
-            buttonSpan = button.find('span'),
-            durationStore,
-            timespan = 0;
+    var timer = new function () {
+        var $this = this
+            , elem = $('#tracking-timer')
+            , timespan = 0
+            , intervalHandle = null
+        ;
 
-        function formatTrackerTime(value) {
-            var hours, minutes, seconds;
+        this.setTimeSpan = function (value) {
+            timespan = parseInt(value);
+            return this;
+        };
+
+        this.getTimeSpan = function () {
+            return timespan;
+        };
+
+        this.reset = function () {
+            elem.text(this.setTimeSpan(0).stop().getFormattedText());
+            return this;
+        };
+
+        this.start = function (span) {
+            this.stop().setTimeSpan(span || 0);
+            intervalHandle = setInterval(function () {
+                ++timespan;
+                elem.text($this.getFormattedText());
+            }, 1000);
+            return this;
+        };
+
+        this.stop = function () {
+            if (intervalHandle) {
+                clearInterval(intervalHandle);
+                intervalHandle = null;
+            }
+            return this;
+        };
+
+        this.getFormattedText = function () {
+            var hours
+                , minutes
+                , seconds
+                , value = this.getTimeSpan()
+            ;
 
             hours = Math.floor(value / 3600);
             value = value % 3600;
@@ -116,72 +306,117 @@
             minutes = minutes > 9 ? minutes.toString() : '0' + minutes.toString();
             seconds = seconds > 9 ? seconds.toString() : '0' + seconds.toString();
 
-            trackingTimer.text(hours + ':' + minutes + ':' + seconds);
-        }
+            return hours + ':' + minutes + ':' + seconds;
+        };
 
-        function startTracker() {
-            buttonSpan.removeClass('dashicons-controls-play').addClass('dashicons-clock');
-            button.data('status', 'tracking');
-
-            timeTrackPanel.triggerHandler('updateCurrentTimeTracking', {});
-
-            tracker = setInterval(function () {
-                ++timespan;
-                formatTrackerTime(timespan);
-            }, 1000);
-        }
-
-        function stopTracker() {
-            buttonSpan.removeClass('dashicons-clock').addClass('dashicons-yes');
-            button.data('status', 'completed');
-            if (tracker) {
-                clearTimeout(tracker);
-                tracker = false;
+        tracker.addHandler('transition', function (status) {
+            if ('initial' === status) {
+                $this.reset();
             }
-        }
+        });
 
-        function resetTracker() {
-            buttonSpan.removeClass('dashicons-yes').addClass('dashicons-controls-play');
-            button.data('status', 'initial');
+        tracker.addHandler('started', function (response) {
+            if (response.success) {
+                $this.start();
+            }
+        });
 
-            projectTag.data('slug', '').text(projectTag.data('untagged'));
-            projectTag.show();
-            projectStatusDesc.show();
-            editProjectTagArea.hide();
+        tracker.addHandler('stopped', function (response) {
+            if (response.success) {
+                $this.stop();
+            }
+        });
 
-            trackingTitle.text(trackingTitle.data('untitled'));
-            trackingTitle.show();
-            editTrackingTitleArea.hide();
+        tracker.addHandler('resumed', function (response) {
+            var begin;
 
-            timespan = 0;
-            formatTrackerTime(timespan);
-        }
+            if (response.success && response.data.track_begin) {
+                begin = parseInt(response.data.track_begin);
+            }
 
-        button.on('mousedown', function () {
-            if (!buttonTimer) {
-                buttonTimer = setTimeout(function () {
-                    switch (button.data('status')) {
-                        case 'initial':
-                            startTracker();
-                            break;
-                        case 'tracking':
-                            stopTracker();
-                            break;
-                        case 'completed':
-                            resetTracker();
-                            break;
-                    }
-                    durationStore = button[0].style.transitionDuration;
-                    button[0].style.transitionDuration = '0s';
-                    buttonTimer = false;
-                }, 1000);
+            if (begin) {
+                $this.start((Date.now() / 1000) - begin);
+            }
+        });
+    };
+
+    var button = new function () {
+        var $this = this
+            , btn = $('#time-track-panel-button')
+            , statuses = ['initial', 'started', 'stopped']
+            , pushHandler = null
+            , duration = null
+            , span = btn.find('span')
+        ;
+
+        this.setStatus = function (status) {
+            var classes = {
+                initial: 'dashicons-controls-play',
+                started: 'dashicons-clock',
+                stopped: 'dashicons-yes'
+            };
+
+            if (statuses.indexOf(status) > -1) {
+                btn.data('status', status);
+                span.removeClass(Object.values(classes).join(' ')).addClass(classes[status]);
+            }
+            return this;
+        };
+
+        this.getStatus = function () {
+            return btn.data('status');
+        };
+
+        this.transition = function () {
+            switch (this.getStatus()) {
+                case 'initial':
+                    $this.setStatus('started');
+                    break;
+
+                case 'started':
+                    $this.setStatus('stopped');
+                    break;
+
+                case 'stopped':
+                    $this.setStatus('initial');
+                    break;
+            }
+            tracker.handle('transition', [this.getStatus()]);
+        };
+
+        btn.on('mousedown', function () {
+            if (!pushHandler) {
+                pushHandler = setTimeout(function () {
+                    $this.transition();
+                    duration = btn[0].style.transitionDuration;
+                    btn[0].style.transitionDuration = '0s';
+                    pushHandler = null;
+                }, 1500);
             }
         }).on('mouseup', function () {
             setTimeout(function () {
-                button[0].style.transitionDuration = durationStore;
+                btn[0].style.transitionDuration = duration;
             }, 10);
-            clearTimeout(buttonTimer);
-            buttonTimer = false;
+            clearTimeout(pushHandler);
+            pushHandler = null;
+        });
+
+        tracker.addHandler('resumed', function (response) {
+            if (response.success && response.data.track_id) {
+                $this.setStatus('started');
+            }
         });
     };
+
+    $(document).ready(function () {
+        tracker.init();
+    });
 })(jQuery);
+
+// TODO: 에러 케이스에 대해 잘 대비
+// TODO: NONCE 값 틀어질 경우에 유저에게 잘 피드백 해 줘야 함.
+// TODO: 최소 작업 시간
+// TODO: 한 작업 내 세션 추가
+// TODO: 관리자 목록에서 시간 칼림이 나오게 처리
+// TODO: 관리자 싱글 페이지에서 시간 관리에 대한 스크립트 지원, 스타일 지원
+// TODO: 시작하지 않은 상태일 때 굳이 패널을 보일 필요 없음. 토글하는 메뉴 추가.

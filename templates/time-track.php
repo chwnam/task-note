@@ -15,10 +15,9 @@
 				href="#"
 				id="project-tag"
 				role="button"
-				data-slug="line-engineering"
+				data-slug=""
 				data-untagged="<?php echo esc_attr( $untagged ); ?>"
 			><?php echo esc_html( $projects[ $project_slug ] ?? $untagged ); ?></a>
-			<span id="project-status-desc"></span>
 		</p>
 		<p id="edit-project-tag-area" style="display:none;">
 			<label
@@ -26,6 +25,7 @@
 				class="screen-reader-text"
 			>프로젝트 태그 선택</label>
 			<select id="project-tag-select">
+				<option value="">미선택</option>
 				<?php foreach ( $projects as $slug => $name ): ?>
 					<option
 						value="<?php echo esc_attr( $slug ); ?>"

@@ -2,6 +2,7 @@
 
 class Task_Note_Time_Track_Check {
 	public function __construct() {
+		add_action( 'wp_ajax_time_track_checkpoint', [ $this, 'time_track_checkpoint' ] );
 		add_action( 'wp_loaded', [ $this, 'time_track' ] );
 	}
 
@@ -54,5 +55,180 @@ class Task_Note_Time_Track_Check {
 		);
 		wp_enqueue_script( 'tn-time-track-check' );
 		wp_enqueue_style( 'tn-time-track-check' );
+	}
+
+	public function get_tracking() {
+		$posts = get_Posts(
+			[
+				'post_status'      => 'pending',
+				'post_type'        => TNCT::TIME_TRACK,
+				'post_author'      => get_current_user_id(),
+				'orderby'          => 'date',
+				'order'            => 'ASC',
+				'posts_per_page'   => 1,
+				'suppress_filters' => 1,
+			]
+		);
+
+		return $posts ? $posts[0] : null;
+	}
+
+	public function start_tracking() {
+		$track = $this->get_tracking();
+
+		if ( ! $track ) {
+			$post_id = wp_insert_post(
+				[
+					'post_status'  => 'pending',
+					'post_type'    => TNCT::TIME_TRACK,
+					'post_author'  => get_current_user_id(),
+					'post_date'    => current_time( 'mysql' ),
+					'post_title'   => '',
+					'post_content' => '',
+				]
+			);
+
+			if ( is_wp_error( $post_id ) ) {
+				return $post_id;
+			} else {
+				$track = get_post( $post_id );
+			}
+		}
+
+		$begin = get_post_meta( $track->ID, TNCT::DATE_BEGIN, true );
+		if ( ! $begin ) {
+			update_post_meta( $track->ID, TNCT::DATE_BEGIN, time() );
+		}
+
+		return $track;
+	}
+
+	public function stop_tracking() {
+		$track = $this->get_tracking();
+
+		if ( ! $track ) {
+			return new WP_Error( 'tracking_error', '트래킹 종료 에러. 생성된 트래킹이 없음.' );
+		}
+
+		$track->post_status = 'publish';
+
+		wp_update_post( $track );
+
+		update_post_meta( $track->ID, TNCT::DATE_END, time() );
+
+		return $track;
+	}
+
+	public function update_tracking( array $data = [] ) {
+		$track = $this->get_tracking();
+
+		if ( $track ) {
+			$default = static::get_default_data();
+			$data    = array_intersect_key( wp_parse_args( $data, $default ), $default );
+
+			$track->post_title = sanitize_text_field( $data['track_title'] ?? '' );
+			wp_update_post( $track );
+
+			$project_slug = sanitize_key( $data['project_slug'] ?? '' );
+			if ( $project_slug ) {
+				wp_set_object_terms( $track->ID, $project_slug, TNCT::PROJECT_TAG, false );
+			} else {
+				wp_delete_object_term_relationships( $track->ID, TNCT::PROJECT_TAG );
+			}
+		}
+
+		return $track;
+	}
+
+	public function time_track_checkpoint() {
+		check_ajax_referer( 'tn-time-track-check', 'nonce' );
+
+		switch ( $_REQUEST['checkpoint'] ?? '' ) {
+			case 'get':
+				$this->time_track_checkpoint__get();
+				break;
+
+			case 'start':
+				$this->time_track_checkpoint__start();
+				break;
+
+			case 'stop':
+				$this->time_track_checkpoint__stop();
+				break;
+
+			case 'update':
+				$this->time_track_checkpoint__update();
+				break;
+		}
+	}
+
+	protected function time_track_checkpoint__get() {
+		$tracking = $this->get_tracking();
+
+		if ( is_wp_error( $tracking ) ) {
+			wp_send_json_error( $tracking );
+		} elseif ( ! $tracking ) {
+			wp_send_json_success( [ 'track_id' => null ] );
+		} else {
+			wp_send_json_success( static::post_to_data( $tracking ) );
+		}
+	}
+
+	protected function time_track_checkpoint__start() {
+		$tracking = $this->start_tracking();
+
+		if ( is_wp_error( $tracking ) ) {
+			wp_send_json_error( $tracking );
+		} else {
+			wp_send_json_success( static::post_to_data( $tracking ) );
+		}
+	}
+
+	protected function time_track_checkpoint__stop() {
+		$tracking = $this->stop_tracking();
+
+		if ( is_wp_error( $tracking ) ) {
+			wp_send_json_error( $tracking );
+		} else {
+			wp_send_json_success( static::post_to_data( $tracking ) );
+		}
+	}
+
+	protected function time_track_checkpoint__update() {
+		$tracking = $this->update_tracking( $_REQUEST );
+
+		if ( is_wp_error( $tracking ) ) {
+			wp_send_json_error( $tracking );
+		} else {
+			wp_send_json_success( static::post_to_data( $tracking ) );
+		}
+	}
+
+	public static function get_default_data() {
+		return [
+			'track_id'     => null,
+			'track_title'  => '',
+			'project_slug' => '',
+			'track_begin'  => null,
+		];
+	}
+
+	public static function post_to_data( WP_Post $post ): array {
+		$data = self::get_default_data();
+
+		$terms = wp_get_post_terms( $post->ID, TNCT::PROJECT_TAG, [ 'fields' => 'id=>slug' ] );
+		if ( is_array( $terms ) && sizeof( $terms ) ) {
+			reset( $terms );
+			$slug = current( $terms );
+		} else {
+			$slug = '';
+		}
+
+		$data['track_id']     = $post->ID;
+		$data['track_title']  = $post->post_title;
+		$data['project_slug'] = $slug;
+		$data['track_begin']  = get_post_meta( $post->ID, TNCT::DATE_BEGIN, true );
+
+		return $data;
 	}
 }

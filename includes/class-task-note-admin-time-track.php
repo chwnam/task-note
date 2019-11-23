@@ -94,41 +94,44 @@ class Task_Note_Admin_Time_Track {
 			return;
 		}
 
-		if ( $updated && $post && $post->post_status = 'trash' ) {
-			check_admin_referer( 'time_track_properties', 'time_track_nonce' );
-		}
+		if ( $updated && $post && $post->post_status != 'trash' &&
+		     isset( $_REQUEST['time_track_date'] ) &&
+		     isset( $_REQUEST['time_track_begin'] ) &&
+		     isset( $_REQUEST['time_track_end'] )
+		) {
+			$date = $_REQUEST['time_track_date'] ?? [];
 
-		$date  = $_REQUEST['time_track_date'] ?? [];
-		$year  = sprintf( '%04d', intval( $date['year'] ?? 0 ) );
-		$month = sprintf( '%02d', intval( $date['month'] ?? 0 ) );
-		$day   = sprintf( '%02d', intval( $date['day'] ?? 0 ) );
+			$year  = sprintf( '%04d', intval( $date['year'] ?? 0 ) );
+			$month = sprintf( '%02d', intval( $date['month'] ?? 0 ) );
+			$day   = sprintf( '%02d', intval( $date['day'] ?? 0 ) );
 
-		$begin        = $_REQUEST['time_track_begin'] ?? [];
-		$begin_hour   = sprintf( '%02d', intval( $begin['hour'] ?? 0 ) );
-		$begin_minute = sprintf( '%02d', intval( $begin['minute'] ?? 0 ) );
+			$begin        = $_REQUEST['time_track_begin'] ?? [];
+			$begin_hour   = sprintf( '%02d', intval( $begin['hour'] ?? 0 ) );
+			$begin_minute = sprintf( '%02d', intval( $begin['minute'] ?? 0 ) );
 
-		$end        = $_REQUEST['time_track_end'] ?? [];
-		$end_hour   = sprintf( '%02d', intval( $end['hour'] ?? 0 ) );
-		$end_minute = sprintf( '%02d', intval( $end['minute'] ?? 0 ) );
+			$end        = $_REQUEST['time_track_end'] ?? [];
+			$end_hour   = sprintf( '%02d', intval( $end['hour'] ?? 0 ) );
+			$end_minute = sprintf( '%02d', intval( $end['minute'] ?? 0 ) );
 
-		$begin_datetime = DateTime::createFromFormat(
-			'Y-m-d H:i:s',
-			"{$year}-{$month}-{$day} {$begin_hour}:{$begin_minute}:00",
-			new DateTimeZone( 'Asia/Seoul' )
-		);
+			$begin_datetime = DateTime::createFromFormat(
+				'Y-m-d H:i:s',
+				"{$year}-{$month}-{$day} {$begin_hour}:{$begin_minute}:00",
+				new DateTimeZone( 'Asia/Seoul' )
+			);
 
-		if ( $begin_datetime ) {
-			update_post_meta( $post_id, Task_Note_Custom_Types::DATE_BEGIN, $begin_datetime->getTimestamp() );
-		}
+			if ( $begin_datetime ) {
+				update_post_meta( $post_id, Task_Note_Custom_Types::DATE_BEGIN, $begin_datetime->getTimestamp() );
+			}
 
-		$end_datetime = DateTime::createFromFormat(
-			'Y-m-d H:i:s',
-			"{$year}-{$month}-{$day} {$end_hour}:{$end_minute}:00",
-			new DateTimeZone( 'Asia/Seoul' )
-		);
+			$end_datetime = DateTime::createFromFormat(
+				'Y-m-d H:i:s',
+				"{$year}-{$month}-{$day} {$end_hour}:{$end_minute}:00",
+				new DateTimeZone( 'Asia/Seoul' )
+			);
 
-		if ( $end_datetime ) {
-			update_post_meta( $post_id, Task_Note_Custom_Types::DATE_END, $end_datetime->getTimestamp() );
+			if ( $end_datetime ) {
+				update_post_meta( $post_id, Task_Note_Custom_Types::DATE_END, $end_datetime->getTimestamp() );
+			}
 		}
 	}
 }
