@@ -22,7 +22,7 @@ class Task_Note_Admin_Time_Track {
 			'시간추적',
 			[ $this, 'output_time_track_meta_box' ],
 			null,
-			'advanced',
+			'normal',
 			'default'
 		);
 	}
