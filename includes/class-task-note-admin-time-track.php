@@ -19,7 +19,7 @@ class Task_Note_Admin_Time_Track {
 	public function add_meta_boxes(): void {
 		add_meta_box(
 			'time-track',
-			'시간추적',
+			'작업 시간',
 			[ $this, 'output_time_track_meta_box' ],
 			null,
 			'normal',
