@@ -261,13 +261,13 @@ class Task_Note_Custom_Types {
 			if ( is_numeric( $value ) ) {
 				$sanitized = absint( $value );
 			} else {
-				$datetime = DateTime::createFromFormat( 'Y-m-d', $value, new DateTimeZone( 'Asia/Seoul' ) );
+				$datetime = DateTime::createFromFormat( 'Y-m-d', $value, wp_timezone() );
 				if ( $datetime ) {
 					$sanitized = $datetime->getTimestamp();
 				}
 			}
 		} elseif ( is_array( $value ) && 3 === sizeof( $value ) ) {
-			$datetime = DateTime::createFromFormat( 'Y-m-d', implode( '-', $value ), new DateTimeZone( 'Asia/Seoul' ) );
+			$datetime = DateTime::createFromFormat( 'Y-m-d', implode( '-', $value ), wp_timezone() );
 			if ( $datetime ) {
 				$sanitized = $datetime->getTimestamp();
 			}
