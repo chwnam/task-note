@@ -3,7 +3,6 @@
 class Task_Note_Admin_Time_Track {
 	public function __construct() {
 		if ( is_admin() ) {
-			add_action( 'admin_enqueue_scripts', [$this, 'admin_enqueue_scripts'] );
 			add_action( 'pre_get_posts', [ $this, 'pre_get_posts' ] );
 			add_action( 'current_screen', [ $this, 'current_screen' ] );
 			add_action( 'save_post_time_track', [ $this, 'save_post' ], 10, 3 );
