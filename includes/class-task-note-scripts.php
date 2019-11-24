@@ -18,7 +18,14 @@ class Task_Note_Scripts {
 				'deps'      => [ 'jquery' ],
 				'ver'       => TASK_NOTE_VERSION,
 				'in_footer' => true,
-			]
+			],
+			[
+				'handle'    => 'tn-time-track-admin-bar',
+				'src'       => plugins_url( 'assets/js/time-track-admin-bar.js', TASK_NOTE_MAIN ),
+				'deps'      => [ 'jquery' ],
+				'ver'       => TASK_NOTE_VERSION,
+				'in_footer' => true,
+			],
 		];
 
 		$styles = [
@@ -27,7 +34,13 @@ class Task_Note_Scripts {
 				'src'    => plugins_url( 'assets/css/time-track-check.css', TASK_NOTE_MAIN ),
 				'deps'   => [],
 				'ver'    => TASK_NOTE_VERSION,
-			]
+			],
+			[
+				'handle' => 'tn-time-track-admin-bar',
+				'src'    => plugins_url( 'assets/css/time-track-admin-bar.css', TASK_NOTE_MAIN ),
+				'deps'   => [],
+				'ver'    => TASK_NOTE_VERSION,
+			],
 		];
 
 		$this->register_scripts_styles( $scripts, $styles );
@@ -50,7 +63,14 @@ class Task_Note_Scripts {
 				'deps'      => [ 'jquery' ],
 				'ver'       => TASK_NOTE_VERSION,
 				'in_footer' => true,
-			]
+			],
+			[
+				'handle'    => 'tn-time-track-admin-bar',
+				'src'       => plugins_url( 'assets/js/time-track-admin-bar.js', TASK_NOTE_MAIN ),
+				'deps'      => [ 'jquery' ],
+				'ver'       => TASK_NOTE_VERSION,
+				'in_footer' => true,
+			],
 		];
 
 		$styles = [
@@ -59,7 +79,13 @@ class Task_Note_Scripts {
 				'src'    => plugins_url( 'assets/css/time-track-check.css', TASK_NOTE_MAIN ),
 				'deps'   => [],
 				'ver'    => TASK_NOTE_VERSION,
-			]
+			],
+			[
+				'handle' => 'tn-time-track-admin-bar',
+				'src'    => plugins_url( 'assets/css/time-track-admin-bar.css', TASK_NOTE_MAIN ),
+				'deps'   => [],
+				'ver'    => TASK_NOTE_VERSION,
+			],
 		];
 
 		$this->register_scripts_styles( $scripts, $styles );

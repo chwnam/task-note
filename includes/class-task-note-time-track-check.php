@@ -2,8 +2,27 @@
 
 class Task_Note_Time_Track_Check {
 	public function __construct() {
+		add_action( 'wp_before_admin_bar_render', [ $this, 'wp_before_admin_bar_render' ] );
 		add_action( 'wp_ajax_time_track_checkpoint', [ $this, 'time_track_checkpoint' ] );
 		add_action( 'wp_loaded', [ $this, 'time_track' ] );
+	}
+
+	public function wp_before_admin_bar_render() {
+		/** @global WP_Admin_Bar $wp_admin_bar */
+		global $wp_admin_bar;
+
+		$tracking = $this->get_tracking();
+
+		$wp_admin_bar->add_menu(
+			[
+				'id'     => 'time-track',
+				'parent' => 'top-secondary',
+				'title'  => '시간 추적',
+				'meta'   => [
+					'class' => $tracking ? 'active' : '',
+				],
+			]
+		);
 	}
 
 	public function time_track() {
@@ -37,6 +56,7 @@ class Task_Note_Time_Track_Check {
 		tn_template(
 			'time-track.php',
 			[
+				'show'          => ! is_null( $this->get_tracking() ),
 				'projects'      => array_combine( wp_list_pluck( $projects, 'slug' ), wp_list_pluck( $projects, 'name' ) ),
 				'project_slug'  => $project_slug,
 				'tracking_name' => empty( $tracking_name ) ? $untitled : $tracking_name,
@@ -55,10 +75,14 @@ class Task_Note_Time_Track_Check {
 		);
 		wp_enqueue_script( 'tn-time-track-check' );
 		wp_enqueue_style( 'tn-time-track-check' );
+
+		wp_enqueue_script( 'tn-time-track-admin-bar' );
+		wp_enqueue_style( 'tn-time-track-admin-bar' );
+
 	}
 
 	public function get_tracking() {
-		$posts = get_Posts(
+		$posts = get_posts(
 			[
 				'post_status'      => 'pending',
 				'post_type'        => TNCT::TIME_TRACK,

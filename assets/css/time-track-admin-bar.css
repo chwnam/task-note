@@ -1,0 +1,15 @@
+#wp-admin-bar-time-track .ab-empty-item {
+    cursor: pointer;
+}
+
+#wp-admin-bar-time-track.active {
+    background-color: #0a0;
+    /*background-image: -moz-linear-gradient(bottom, #060, #0d0);*/
+    /*background-image: -webkit-gradient(linear, left bottom, left top, from(#060), to(#0d0));*/
+}
+
+#wp-admin-bar-time-track.active .ab-item:hover {
+    background-color: #060 !important;
+    /*background-image: -moz-linear-gradient(bottom, #060, #0d0);*/
+    /*background-image: -webkit-gradient(linear, left bottom, left top, from(#060), to(#0d0));*/
+}

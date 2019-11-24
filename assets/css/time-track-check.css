@@ -1,4 +1,5 @@
-#time-track-panel {
+#time-track-panel.active {
+    display: block;
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -7,6 +8,10 @@
     background-color: #1c1c1c;
     opacity: 60%;
     box-sizing: border-box;
+}
+
+#time-track-panel {
+    display: none;
 }
 
 #info-area {
@@ -109,7 +114,7 @@
     color: #00FF00;
 }
 
-#info-area  .edit-button.cancel {
+#info-area .edit-button.cancel {
     color: red;
 }
 

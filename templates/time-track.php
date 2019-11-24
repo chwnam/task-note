@@ -1,5 +1,6 @@
 <?php
 /**
+ * @var bool  $show
  * @var array $projects
  * @var string $project_slug
  * @var string $tracking_name
@@ -8,7 +9,7 @@
  */
 ?>
 
-<div id="time-track-panel">
+<div id="time-track-panel" class="<?php echo $show ? 'active' : ''; ?>">
 	<div id="info-area">
 		<p>
 			<a
@@ -79,7 +80,7 @@
 			>취소</a>
 		</p>
 
-		<p id="tracking-timer">00:00:00</p>
+		<p id="tracking-timer">--:--:--</p>
 	</div>
 	<div id="button-area">
 		<button
