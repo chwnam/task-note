@@ -99,6 +99,8 @@ class Task_Note_Admin_Time_Track {
 		     isset( $_REQUEST['time_track_begin'] ) &&
 		     isset( $_REQUEST['time_track_end'] )
 		) {
+			check_admin_referer( 'time_track_properties', 'time_track_nonce' );
+
 			$date = $_REQUEST['time_track_date'] ?? [];
 
 			$year  = sprintf( '%04d', intval( $date['year'] ?? 0 ) );
