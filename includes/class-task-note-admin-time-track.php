@@ -72,7 +72,7 @@ class Task_Note_Admin_Time_Track {
 		$begin_minute = '';
 		$end_hour     = '';
 		$end_minute   = '';
-		$timespan     = 0;
+		$timespan     = '';
 
 		$beg = absint( get_post_meta( $post->ID, Task_Note_Custom_Types::DATE_BEGIN, true ) );
 		$end = absint( get_post_meta( $post->ID, Task_Note_Custom_Types::DATE_END, true ) );
@@ -102,8 +102,8 @@ class Task_Note_Admin_Time_Track {
 			}
 		}
 
-		if ( $begin_datetime && $end_datetime ) {
-			$timespan = $end_datetime->getTimestamp() - $begin_datetime->getTimestamp();
+		if ( $beg && $end && $end > $beg ) {
+			$timespan = $end - $beg;
 		}
 
 		tn_template(
@@ -225,10 +225,12 @@ class Task_Note_Admin_Time_Track {
 	}
 
 	private function print_datetime( $timestamp ) {
-		printf(
-			'<time datetime="%1$s %2$s">%1$s<br>%2$s</time>',
-			format_datetime( $timestamp, 'Y-m-d' ),
-			format_datetime( $timestamp, 'H:i:s' )
-		);
+		if ( $timestamp ) {
+			printf(
+				'<time datetime="%1$s %2$s">%1$s<br>%2$s</time>',
+				format_datetime( $timestamp, 'Y-m-d' ),
+				format_datetime( $timestamp, 'H:i:s' )
+			);
+		}
 	}
 }
