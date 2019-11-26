@@ -202,7 +202,6 @@
         };
 
         this.showEditForm = function () {
-            console.log(tracker.getCurrentStatus());
             if ('started' === tracker.getCurrentStatus()) {
                 text.hide();
                 edit.val(text.text()).show();
@@ -254,28 +253,27 @@
     var timer = new function () {
         var $this = this
             , elem = $('#tracking-timer')
-            , timespan = 0
+            , begin = 0
             , intervalHandle = null
         ;
 
-        this.setTimeSpan = function (value) {
-            timespan = parseInt(value);
+        this.setBegin = function (value) {
+            begin = parseInt(value);
             return this;
         };
 
-        this.getTimeSpan = function () {
-            return timespan;
+        this.getBegin = function () {
+            return begin;
         };
 
         this.reset = function () {
-            elem.text(this.setTimeSpan(0).stop().getFormattedText());
+            elem.text('--:--:--');
             return this;
         };
 
-        this.start = function (span) {
-            this.stop().setTimeSpan(span || 0);
+        this.start = function (begin) {
+            this.stop().setBegin(begin);
             intervalHandle = setInterval(function () {
-                ++timespan;
                 elem.text($this.getFormattedText());
             }, 1000);
             return this;
@@ -293,14 +291,14 @@
             var hours
                 , minutes
                 , seconds
-                , value = this.getTimeSpan()
+                , value = (Date.now() / 1000) -this.getBegin()
             ;
 
             hours = Math.floor(value / 3600);
             value = value % 3600;
 
             minutes = Math.floor(value / 60);
-            seconds = value % 60;
+            seconds = Math.floor(value % 60);
 
             hours = hours > 9 ? hours.toString() : '0' + hours.toString();
             minutes = minutes > 9 ? minutes.toString() : '0' + minutes.toString();
@@ -317,7 +315,7 @@
 
         tracker.addHandler('started', function (response) {
             if (response.success) {
-                $this.start();
+                $this.start(response.data.time_begin);
             }
         });
 
@@ -335,7 +333,7 @@
             }
 
             if (begin) {
-                $this.start((Date.now() / 1000) - begin);
+                $this.start(begin);
             }
         });
     };
