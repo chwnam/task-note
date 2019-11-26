@@ -37,6 +37,10 @@
 #tracking-title {
     font-size: 20px;
     color: #00FF00;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 #project-tag:active,
