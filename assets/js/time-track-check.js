@@ -67,6 +67,10 @@
             });
         };
 
+        this.reset = function () {
+            this.handle('reset');
+        };
+
         this.handle = function (name, args) {
             if (handlers.hasOwnProperty(name)) {
                 $(handlers[name]).each(function (idx, elem) {
@@ -87,6 +91,7 @@
         this.addHandler('transition', function (status) {
             switch (status) {
                 case 'initial':
+                    $this.reset();
                     break;
 
                 case 'started':
@@ -179,6 +184,10 @@
                 $this.set(response.data.project_slug);
             }
         });
+
+        tracker.addHandler('reset', function (response) {
+            $this.set('');
+        });
     };
 
     var title = new function () {
@@ -204,7 +213,8 @@
         this.showEditForm = function () {
             if ('started' === tracker.getCurrentStatus()) {
                 text.hide();
-                edit.val(text.text()).show();
+                input.val(text.text());
+                edit.show();
                 input.select();
             }
         };
@@ -247,6 +257,10 @@
             if (response.success && response.data.track_title) {
                 $this.set(response.data.track_title);
             }
+        });
+
+        tracker.addHandler('reset', function (response) {
+            $this.set('');
         });
     };
 
@@ -291,7 +305,7 @@
             var hours
                 , minutes
                 , seconds
-                , value = (Date.now() / 1000) -this.getBegin()
+                , value = (Date.now() / 1000) - this.getBegin()
             ;
 
             hours = Math.floor(value / 3600);
@@ -315,7 +329,7 @@
 
         tracker.addHandler('started', function (response) {
             if (response.success) {
-                $this.start(response.data.time_begin);
+                $this.start(response.data.track_begin);
             }
         });
 
@@ -335,6 +349,10 @@
             if (begin) {
                 $this.start(begin);
             }
+        });
+
+        tracker.addHandler('reset', function (response) {
+            $this.reset();
         });
     };
 
