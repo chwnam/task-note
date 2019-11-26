@@ -138,7 +138,8 @@
 				type="number"
 				class="datetime-input"
 				min="0"
-				value="<?php echo esc_attr( intval( $timespan / 60 ) ); ?>"
+				value="<?php echo esc_attr( $timespan ? intval( $timespan / 60 ) : '' ); ?>"
+				readonly="readonly"
 			><label
 				for="timespan"
 				class="datetime-label"
