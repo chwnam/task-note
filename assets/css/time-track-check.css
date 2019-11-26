@@ -125,3 +125,13 @@
 #time-track-panel a {
     text-decoration-line: none;
 }
+
+@media screen and (max-width: 782px) {
+    #wp-admin-bar-time-track {
+        display: block !important;
+    }
+
+    #wp-admin-bar-time-track > div {
+        padding: 0 12px !important;
+    }
+}
