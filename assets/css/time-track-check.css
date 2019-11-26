@@ -1,9 +1,9 @@
 #time-track-panel.active {
     display: block;
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 480px;
+    bottom: 17px;
+    right: 17px;
+    width: 380px;
     height: 120px;
     background-color: #1c1c1c;
     opacity: 60%;
@@ -16,7 +16,7 @@
 
 #info-area {
     float: left;
-    width: 360px;
+    width: 260px;
     height: 100%;
     padding: 7px 15px;
     color: #00FF00;
