@@ -400,7 +400,7 @@
             tracker.handle('transition', [this.getStatus()]);
         };
 
-        btn.on('mousedown', function () {
+        btn.on('mousedown touchstart', function () {
             if (!pushHandler) {
                 pushHandler = setTimeout(function () {
                     $this.transition();
@@ -409,7 +409,7 @@
                     pushHandler = null;
                 }, 1500);
             }
-        }).on('mouseup', function () {
+        }).on('mouseup touchend', function (e) {
             setTimeout(function () {
                 btn[0].style.transitionDuration = duration;
             }, 10);
