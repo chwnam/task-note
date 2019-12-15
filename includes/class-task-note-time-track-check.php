@@ -12,7 +12,7 @@ class Task_Note_Time_Track_Check {
 		global $wp_admin_bar;
 
 		$post = get_post();
-		if ( has_shortcode( $post->post_content, 'time_track' ) ) {
+		if ( $post && has_shortcode( $post->post_content, 'time_track' ) ) {
 			return;
 		}
 
