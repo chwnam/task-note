@@ -25,6 +25,7 @@
         });
 
         if (tracks.length) {
+            $('#no-time-tracks').hide();
             items.hide().html('');
             $.each(tracks, function (idx, elem) {
                 items.append(template(elem));
