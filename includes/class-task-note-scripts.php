@@ -26,6 +26,13 @@ class Task_Note_Scripts {
 				'ver'       => TASK_NOTE_VERSION,
 				'in_footer' => true,
 			],
+			[
+				'handle'    => 'tn-time-track-shortcode',
+				'src'       => plugins_url( 'assets/js/time-track-shortcode.js', TASK_NOTE_MAIN ),
+				'deps'      => [ 'jquery', 'jquery-ui-dialog', 'wp-util' ],
+				'ver'       => TASK_NOTE_VERSION,
+				'in_footer' => true,
+			],
 		];
 
 		$styles = [
@@ -41,6 +48,12 @@ class Task_Note_Scripts {
 				'deps'   => [],
 				'ver'    => TASK_NOTE_VERSION,
 			],
+			[
+				'handle' => 'tn-time-track-shortcode',
+				'src'    => plugins_url( 'assets/css/time-track-shortcode.css', TASK_NOTE_MAIN ),
+				'deps'   => [ 'wp-jquery-ui-dialog' ],
+				'ver'    => TASK_NOTE_VERSION,
+			]
 		];
 
 		$this->register_scripts_styles( $scripts, $styles );

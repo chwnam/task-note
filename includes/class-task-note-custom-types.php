@@ -11,8 +11,9 @@ class Task_Note_Custom_Types {
 	const PROJECT_TAG = 'project_tag';
 	const RECIPE_TAG  = 'recipe_tag';
 
-	const DATE_BEGIN  = 'tn_time_track_date_begin';
-	const DATE_END    = 'tn_time_track_date_end';
+	const DATE_BEGIN = 'tn_time_track_date_begin';
+	const DATE_END   = 'tn_time_track_date_end';
+	const ESTIMATED  = 'tn_time_track_estimated';
 
 	public function __construct() {
 		add_action( 'init', [ $this, 'init_callback' ] );
@@ -323,6 +324,20 @@ class Task_Note_Custom_Types {
 				'show_in_rest'      => false,
 			]
 		);
+
+		register_meta(
+			'post',
+			self::ESTIMATED,
+			[
+				'object_subtype'    => self::TIME_TRACK,
+				'type'              => 'int',
+				'description'       => '예상 작업 시간',
+				'single'            => true,
+				'sanitize_callback' => 'absint',
+				'auth_callback'     => null,
+				'show_in_rest'      => false,
+			]
+		);
 	}
 
 	public function restrict_to_frontend( ?array $posts, WP_Query $query ): ?array {
@@ -349,6 +364,7 @@ class Task_Note_Custom_Types {
 		if ( 'time_track' === $post_type ) {
 			$value = false;
 		}
+
 		return $value;
 	}
 

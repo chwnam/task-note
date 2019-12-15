@@ -11,6 +11,11 @@ class Task_Note_Time_Track_Check {
 		/** @global WP_Admin_Bar $wp_admin_bar */
 		global $wp_admin_bar;
 
+		$post = get_post();
+		if ( has_shortcode( $post->post_content, 'time_track' ) ) {
+			return;
+		}
+
 		$tracking = $this->get_tracking();
 
 		$wp_admin_bar->add_menu(
@@ -52,6 +57,11 @@ class Task_Note_Time_Track_Check {
 		$tracking_name = '';
 		$untagged      = '프로젝트 미선택';
 		$untitled      = '제목 없음';
+
+		$post = get_post();
+		if ( has_shortcode( $post->post_content, 'time_track' ) ) {
+			return;
+		}
 
 		tn_template(
 			'time-track.php',

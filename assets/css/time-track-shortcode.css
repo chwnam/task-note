@@ -1,0 +1,145 @@
+#time-track-shortcode * {
+    font-size: 16px;
+}
+
+#time-track-shortcode > h2 {
+    font-size: 24px;
+}
+
+
+#time-track-table {
+}
+
+#time-track-table .title {
+    width: 350px;
+}
+
+#time-track-table .project {
+    width: 120px;
+}
+
+#time-track-table .begin-end {
+    width: 80px;
+}
+
+#time-track-table .estimated-evaluated {
+    width: 80px;
+}
+
+#time-track-table > thead th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+#time-track-table .timer {
+    width: 120px;
+}
+
+
+#time-track-table .row-actions {
+    visibility: hidden;
+}
+
+#time-track-table .row-actions.visible {
+    visibility: visible;
+}
+
+#time-track-table a {
+    font-size: 14px;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+#time-track-table a.delete {
+    color: red;
+    font-weight: bold;
+}
+
+#time-track-table a.before-deadline {
+    color: #3323cc;
+}
+
+#time-track-table a.before-deadline:after {
+    content: ' 남음';
+}
+
+#time-track-table a.past-deadline {
+    color: #cc2233;
+}
+
+#time-track-table a.past-deadline:after {
+    content: ' 지남';
+}
+
+#load-time-tracks td {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+#no-time-tracks td {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+#time-track-dialog table,
+#time-track-dialog tr,
+#time-track-dialog th,
+#time-track-dialog td {
+    border: none;
+}
+
+#time-track-dialog th {
+    width: 120px;
+}
+
+#time-track-dialog th > label {
+    font-weight: 700;
+    font-size: inherit;
+}
+
+#time-track-dialog input {
+    padding: 10px;
+}
+
+#time-track-dialog .time-input {
+    display: inline-block;
+}
+
+#time-track-dialog label.time-input {
+    margin-left: 2px;
+    margin-right: 20px;
+}
+
+.ui-dialog .ui-button {
+    font-size: 1.7rem;
+    font-weight: 600;
+    line-height: 1.25;
+    padding: 1.1em 1.4em;
+    border-radius: 0;
+    text-align: center;
+    color: #fff;
+    border: none;
+    height: unset;
+}
+
+.ui-dialog .ui-button:hover {
+    box-shadow: none;
+    background-color: #cd2653 !important;
+}
+
+#begin_hour, #begin_minute,
+#end_hour, #end_minute,
+#estimated {
+    width: 80px;
+}
+
+label[for=begin_hour],
+label[for=begin_minute],
+label[for=end_hour],
+label[for=end_minute],
+label[for=estimated] {
+    margin-left: 10px;
+    margin-right: 20px;
+}

@@ -1,0 +1,75 @@
+<#
+data = jQuery.extend({
+    post_id: null,
+    title: null,
+    content: null,
+    status: null,
+    project_id: null,
+    project_name: null,
+    begin_hour: null,
+    begin_minute: null,
+    end_hour: null,
+    end_minute: null,
+    estimated: null,
+    evaluated: null
+}, data);
+#>
+<tr data-post-id="{{ data.post_id }}" class="{{ data.status }}">
+    <td class="track-title">
+        {{ data.title }}
+        <div class="row-actions">
+            <a href="#" data-post-id="{{ data.post_id }}" role="button" class="edit">편집</a> |
+            <a href="#" data-post-id="{{ data.post_id }}" role="button" class="delete">삭제</a>
+        </div>
+    </td>
+    <td>
+        <# if (data.project_name) { #>
+        {{ data.project_name }}
+        <# } else { #>
+        (프로젝트 미정)
+        <# } #>
+    </td>
+    <td>
+        <# if ('pending' === data.status || 'publish' === data.status) { #>
+        {{ data.begin_hour }}시 {{ data.begin_minute }}분
+        <# } else { #>
+        (대기중)
+        <# } #>
+        <br>
+        <# if('publish' === data.status) { #>
+        {{ data.end_hour}}시 {{ data.end_minute }}분
+        <# } else if('pending' === data.status) { #>
+        (진행중)
+        <# } else if('draft' === data.status) { #>
+        (대기중)
+        <# } #>
+    </td>
+    <td>
+        <# if(parseInt(data.estimated) > 0) { #>
+        {{ data.estimated }}분
+        <# } else { #>
+        (예상없음)
+        <# } #>
+        <br>
+        <# if(data.evaluated) { #>
+        {{ data.evaluated }}
+        <# } else { #>
+        (측정중)
+        <# } #>
+    </td>
+    <td>
+        <# if('publish' === data.status) { #>
+        (완료됨)
+        <# } else if('pending' === data.status){ #>
+        <a
+                href="#"
+                class="timer"
+                data-post-id="{{ data.post_id }}"
+                data-begin-timestamp="{{ data.begin_timestamp }}"
+                data-estimated="{{ data.estimated }}"
+        >--:--:--</a>
+        <# } else { #>
+        (대기중)
+        <# } #>
+    </td>
+</tr>
