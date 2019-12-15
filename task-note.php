@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 업무 노트
  * Description: 업무 일지를 매일매일 작성합시다. 도움이 됩니다.
- * Version:     0.1.0-beta.5
+ * Version:     0.1.0-beta.6
  * Author:      남창우
  * Author URI:  https://blog.changwoo.pe.kr
  * Plugin URI:  https://github.com/chwnam/task-note.git
@@ -10,7 +10,7 @@
  */
 
 define( 'TASK_NOTE_MAIN', __FILE__ );
-define( 'TASK_NOTE_VERSION', '0.1.0-beta.5' );
+define( 'TASK_NOTE_VERSION', '0.1.0-beta.6' );
 
 final class Task_Note {
 	public $modules = [];
