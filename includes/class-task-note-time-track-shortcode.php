@@ -11,6 +11,11 @@ class Task_Note_Time_Track_Shortcode {
 	}
 
 	public function handle_shortcode() {
+		if ( current_user_can( 'administrator' ) ) {
+			return '<p>죄송합니다. 이 페이지는 사이트 관리자만 접근할 수 있습니다.</p>' .
+			       '<p><a href="' . esc_url( wp_login_url( $_SERVER['REQUEST_URI'] ) ) . '">로그인</a></p>';
+		}
+
 		wp_localize_script(
 			'tn-time-track-shortcode',
 			'timeTrackShortcode',
