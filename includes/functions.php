@@ -44,15 +44,12 @@ function format_timespan( int $timespan ): string {
 		$hour = 0;
 	}
 
-	if ( $hour ) {
-		$fmt = '%02$1d 시간 %02d$2d분 %02$2d초';
-	} else {
-		$fmt = '%02$2d분 %02$2d초';
-	}
-
 	$minute = intval( $timespan / MINUTE_IN_SECONDS );
-
 	$second = $timespan % MINUTE_IN_SECONDS;
 
-	return sprintf( $fmt, $hour, $minute, $second );
+	if ( $hour ) {
+		return sprintf( '%02d시간 %02d분 %02d초', $hour, $minute, $second );
+	} else {
+		return sprintf( '%02d분 %02d초', $minute, $second );
+	}
 }
